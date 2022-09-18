@@ -8,15 +8,27 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <time.h>
+#include <semaphore.h>
 
+#include "normes_echanges.h"
+#include "cote_client.h"
+
+//Variables du côté serveur
+serveur server;
+struct sem_t semaphore;
+message * pile_message=server.current_list_messages; //Notre fameux dispacher qui va stocker tous les messages en permanance tant que ce message ce sera pas arrivé à destination.
+
+
+//Fonctions du côté serveur
 
 //C'est la pile d'exécution des threads du serveur
 void push_in_dispatcher(message m){ //On enfile le message dans un pile ! Création éventuelle d'un thread, selon la date de validité du thread
+	accept_connexion(m.sender_);//On accepte la connexion si cela n'est pas encore faite.
 	
 
 }
 
-void accept_connexion(){ //Accepter les connexion entrantes
+void accept_connexion(client customer){ //Accepter les connexion entrantes
 
 
 }

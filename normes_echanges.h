@@ -1,17 +1,15 @@
 
-//Destinataire privé.	
-//Groupe de destinataires. Un destinataire peut être un ou plusieurs groupes c'est la raison pour laquelle on utilise un double pointeur.
-
 //Qu'est-ce qu'un destinataire publique ?
 
 /*Un destinataire public est tt simplement 
 la liste de tous les clients 
 enregistrés sur l'application
 Du coup si nous voulons envoyé un message à un destinataire public
-il suffit de sélectionner  */
+il suffit de sélectionner tous les clients enregistrés */
 
 
 const char * local_IP_adress="127.0.0.1";
+
 
 typedef struct{
 	unsigned int day; //jour
@@ -22,7 +20,7 @@ typedef struct{
 
 typedef struct{
 	char * pseudo;
-	const unsigned int ID_customer;
+	const unsigned int id_customer;
 	int descriptor_customer;
 }client;
 
@@ -41,3 +39,5 @@ typedef struct{
 	message * current_list_messages;//C'est le dispatcher comme sur le sujet. C'est dans cette variable de la structure serveur qu'il faut mettre en action le multithreading.
 	char * IP_adress;
 }serveur;
+
+
