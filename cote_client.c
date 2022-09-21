@@ -16,20 +16,42 @@
 
 //Variables génrales du fichier source
 
-unsigned int indice_current_message=0;
-
+unsigned int indice_current_message=0; //Fonction sender(char * text_message, client sender, client * receiver, serveur server)
+int indice_bloc_message=0;
+unsigned int nb_messages=0;
+int * stockage_indice=NULL;
 
 //Fonctions de la partie cliente
 
-char ** listener(client customer,serveur server){ //Lister tous les messages d'un client en provenance du serveur 
-	server.IP_adress=local_IP_adress;
-	//server_connection(server->IP_adress);
-	customer.descriptor_customer=server_connection(server->IP_adress); // Descripteur de la socket ce qui va permettre d'identifier 
-	for(int i=0;i<sizeof(server.)/sizeof(char*);i++){
-				
-	}
+char ** listener(serveur server, client customer){ //Lister tous les messages à destination d'un seul client en provenance du serveur 
+	stockage_indice=malloc(sizeof(int));//Allocation de mémoire dynamique. Fonction malloc()
+	int indice_de_indice=0;//Variable pour se déplacer à l'intérieur de notre pointeur d'entiers.
 	
-	client_sender(customer);
+	for(int i=0;i<sizeof(server.current_list_messages);i++){
+		for(int e=0;e<sizeof(server.current_list_messages[i].receiver_);e++){
+			if(server.current_list_messages[i].receiver_[e].id_customer==customer.id_customer){ //Si c'est le bon client alors ...
+				//indice_bloc_message=i; //Stockage de son indice i dans le nouvel indice "indice_client" 
+				stockage_indice[indice_de_indice]=i;//Remplissage de notre tableau qui est toujours notre pointeur.
+				nb_messages++;//Incrémentation du nombre de messages
+				indice_de_indice++; // Incrémentation de notre variable servant à gravir les cases mémoires du tableau/pointeur.
+			}//Fin if
+		}//Fin for
+	}//Fin for
+	char * message_clients[nb_messages]; //Tableau de pointeurs que nous allons renvoyer de par cette fonction.
+	
+	for(int i=0;i<nb_messages;i++){
+		for(int e=0;e<indice_de_indice;e++){
+			//*message_clients[i]=server.current_list_messages[stockage_indice[e]].(*text);
+			message_clients[i]=server.current_list_messages[stockage_indice[e]].text;
+		}
+		
+	 }
+	
+	
+	
+	
+	free(stockage_indice); //On libère la mémoire
+	return message_clients; //Je ne sais pas si le return va fonctionner.
 }
 
 /*Dans les paramètres de cette fonction 
@@ -38,6 +60,10 @@ comme n clients.
 Pour n clients cibles il va falloir boucler sur cette fonction.*/
 
 void sender(char * text_message, client sender, client * receiver, serveur server){ //Envoi un message à un autre client via le serveur : Dans le paramètre receiver on attend un tableau de clients allant recevoir le message.
+
+	//server_connection(server.IP_adress);//Création de la socket.
+	
+	
 	//Il faut que current_list_message soit initialiser dans le main ou dans le coté serveur.
 	
 	server.current_list_message[indice_current_message].text=text_message; //On instancie le contenu du message avec le paramètre message qui est un pointeur de char.  
@@ -105,7 +131,7 @@ int server_connection(char * adress_ip_server){ //Utilisation d'une socket
 }
 
 
-//Fonctions de la partie serveur
 
 
 
+//Il faut intégrer la partie sur SDL. Comment intégrer la bibliothèque SDL sur les fichier sources en C/C++

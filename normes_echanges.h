@@ -28,7 +28,7 @@ typedef struct{
 typedef struct{
 	char * text; //c'est le corps du message.
 	client sender_; //Emetteur du message. On part du principe qu'il peut y avoir au maximum une personne dans l'envoi d'un message.
-	client * receiver_;//Pour un ou plusieurs destinataire. 
+	client * receiver_;//Pour un ou plusieurs destinataire devrant recevoir le message. 
 	date send_date; //date d'envoie du message. 
 	date validity_date; //date de validité du message
 }message;
