@@ -15,17 +15,31 @@
 
 //Variables du côté serveur
 serveur server;
-struct sem_t semaphore;
+sem_t semaphore;// Le semaphore sert à synchroniser des threads au sein d'un même processus ou bien entre plusieurs processus.
 message * pile_message=server.current_list_messages; //Notre fameux dispacher qui va stocker tous les messages en permanance tant que ce message ce sera pas arrivé à destination.
 
 server.IP_adress=local_IP_adress; //Association de l'adresse IP locale à notre serveur
+unsigned int instanciation_taille=0; //Indicateur nous permettant de savoir si l'espace mémoire de la pile de message est réalisé : 0 = non instancier et 1= instancier
+//int 
 
 //Fonctions du côté serveur
+
+
 
 //C'est la pile d'exécution des threads du serveur
 void push_in_dispatcher(message m){ //On enfile le message dans une pile ! Création éventuelle d'un thread, selon la date de validité du thread et par défaut sa date d'ajout.
 	accept_connexion(m.sender_);//On accepte la connexion si cela n'est pas encore faite.
+	if(instanciation_taille==0){
+		pile_message=malloc(sizeof(message));	
+		instanciation_taille=1;//Marqueur indiquant que c'est fait
+	}
 	
+	for(int i=0;i<sizeof(pile_message);i++){
+		if(pile_message[i]==NULL){
+			pile_message[i]=m;
+		
+		}
+	}
 
 }
 

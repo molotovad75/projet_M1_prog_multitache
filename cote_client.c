@@ -107,7 +107,8 @@ int server_connection(char * adress_ip_server){ //Utilisation d'une socket
 	//Rappel : Une socket renvoie un entier qui permet de se connecter à un serveur à long terme en créant tout d'abord un canal de communication puis en utilisant une autre fonction. L'entier en question s'appelle un descripteur de socket.
 	
 	struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
-	addr_server.sin_addr.s_addr=inet_addr(*adress_ip_server);
+	//addr_server.sin_addr.s_addr=inet_addr(*adress_ip_server);
+	addr_server.sin_addr.s_addr=inet_addr(adress_ip_server);
 	addr_server.sin_family=AF_INET; //Ceci est pour indiquer le type d'adresse IP. AF_INET est instancié pour indiqué que nous utilisons une adresse IPv4.
 	addr_server.sin_port=htons(30000); //Il faut découvrir ce que signifie réélement la fonction htons.
 	
