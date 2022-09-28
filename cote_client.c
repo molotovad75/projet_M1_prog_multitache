@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <threads.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#include <sys/socket.h>  //Fonction bind() et socket()
+#include <sys/types.h> //Fonction bind()
 #include <pthread.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -18,12 +18,16 @@
 
 unsigned int indice_current_message=0; //Fonction sender(char * text_message, client sender, client * receiver, serveur server)
 int indice_bloc_message=0;
-unsigned int nb_messages=0;
+
 int * stockage_indice=NULL;
+
+struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
 
 //Fonctions de la partie cliente
 
+//A tester
 char ** listener(serveur server, client customer){ //Lister tous les messages à destination d'un seul client en provenance du serveur 
+	unsigned int nb_messages=0;
 	stockage_indice=malloc(sizeof(int));//Allocation de mémoire dynamique. Fonction malloc()
 	int indice_de_indice=0;//Variable pour se déplacer à l'intérieur de notre pointeur d'entiers.
 	
@@ -45,10 +49,7 @@ char ** listener(serveur server, client customer){ //Lister tous les messages à
 			message_clients[i]=server.current_list_messages[stockage_indice[e]].text;
 		}
 		
-	 }
-	
-	
-	
+	 }	
 	
 	free(stockage_indice); //On libère la mémoire
 	return message_clients; //Je ne sais pas si le return va fonctionner.
@@ -59,9 +60,9 @@ on peut avoir un client sur lequel on envoi le message
 comme n clients.
 Pour n clients cibles il va falloir boucler sur cette fonction.*/
 
-void sender(char * text_message, client sender, client * receiver, serveur server){ //Envoi un message à un autre client via le serveur : Dans le paramètre receiver on attend un tableau de clients allant recevoir le message.
 
-	//server_connection(server.IP_adress);//Création de la socket.
+//A tester
+void sender(char * text_message, client sender, client * receiver, serveur server){ //Envoi un message à un autre client via le serveur : Dans le paramètre receiver on attend un tableau de clients allant recevoir le message.
 	
 	
 	//Il faut que current_list_message soit initialiser dans le main ou dans le coté serveur.
@@ -101,14 +102,16 @@ void sender(char * text_message, client sender, client * receiver, serveur serve
 	indice_current_message++; //Incrémentation de l'indice. 
 }
 
-
-//Une fonction pour se connecter à notre serveur.
+//A tester
+//Une fonction pour se connecter à notre serveur. On utilisera cette fonction au tt début.
 int server_connection(char * adress_ip_server){ //Utilisation d'une socket
 	//Rappel : Une socket renvoie un entier qui permet de se connecter à un serveur à long terme en créant tout d'abord un canal de communication puis en utilisant une autre fonction. L'entier en question s'appelle un descripteur de socket.
 	
-	struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
+	//struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
 	//addr_server.sin_addr.s_addr=inet_addr(*adress_ip_server);
-	addr_server.sin_addr.s_addr=inet_addr(adress_ip_server);
+	
+	addr_server.sin_addr.s_addr=inet_addr(adress_ip_server); //Cette fonction sert à convertir une chaine de caractère (chaine de caractères de l'Adresse IP) en adresse compréhensible par le serveur.
+	
 	addr_server.sin_family=AF_INET; //Ceci est pour indiquer le type d'adresse IP. AF_INET est instancié pour indiqué que nous utilisons une adresse IPv4.
 	addr_server.sin_port=htons(30000); //Il faut découvrir ce que signifie réélement la fonction htons.
 	
@@ -118,16 +121,16 @@ int server_connection(char * adress_ip_server){ //Utilisation d'une socket
 	Les paramètres dans l'ordre : 
 	famille, type, protocole.
 	On a mis 0 en dernier paramètre, c'est le système qui va choisir le protocole selon la famille et le type que l'on a utilisé.
-	Cette variable de type entier s'appelle un descripteur de socket.
+	Cette fonction est affecté à une variable de type entier qui s'appelle un descripteur de socket.
 	
 	*/
 	
-	int bind_socket=bind(server_socket_describer,(const struct sockaddr *) &addr_server,sizeof(addr_server)); //Permet à notre socket de se connecter à l'adresse IP de notre serveur !
+	int bind_socket=bind(server_socket_describer,(const struct sockaddr *) &addr_server,sizeof(addr_server)); //Permet à notre socket de se connecter à l'adresse IP de notre serveur ! Il peut donner aussi un nom à notre socket.
 	if(server_socket_describer<0){
 		perror("Connection failed !\n");//La connexion a échoué !
 	}
 	
-	return bind_socket; //On peut décider de retourner le descripteur de socket 
+	return bind_socket; //On peut décider de retourner le nom de socket 
 
 }
 

@@ -7,8 +7,9 @@ enregistrés sur l'application
 Du coup si nous voulons envoyé un message à un destinataire public
 il suffit de sélectionner tous les clients enregistrés */
 
+#include <netinet/in.h>
 
-const char * local_IP_adress="127.0.0.1";
+const char * local_IP_adress="127.0.0.1"; //localhost
 
 
 typedef struct{
@@ -38,6 +39,8 @@ typedef struct{
 	char * name;
 	message * current_list_messages;//C'est le dispatcher comme sur le sujet. C'est dans cette variable de la structure serveur qu'il faut mettre en action le multithreading.
 	char * IP_adress;
+	
+	struct in_addr ip_adress;
 }serveur;
 
 
