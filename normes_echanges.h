@@ -42,5 +42,5 @@ typedef struct{
 	
 	struct in_addr ip_adress;
 }serveur;
-
+//Structure serveur à officialiser !
 

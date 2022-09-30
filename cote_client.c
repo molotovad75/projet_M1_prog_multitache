@@ -10,16 +10,14 @@
 #include <time.h>
 #include <semaphore.h>
 
-
 #include "normes_echanges.h"
-#include "cote_serveur.h"
 
 //Variables génrales du fichier source
 
 unsigned int indice_current_message=0; //Fonction sender(char * text_message, client sender, client * receiver, serveur server)
 int indice_bloc_message=0;
 
-int * stockage_indice=NULL;
+int * stockage_indice_message=NULL; //On veut stocker
 
 struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
 
@@ -28,14 +26,15 @@ struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettan
 //A tester
 char ** listener(serveur server, client customer){ //Lister tous les messages à destination d'un seul client en provenance du serveur 
 	unsigned int nb_messages=0;
-	stockage_indice=malloc(sizeof(int));//Allocation de mémoire dynamique. Fonction malloc()
+	stockage_indice_message=malloc(sizeof(int));//Allocation de mémoire dynamique. Fonction malloc()
 	int indice_de_indice=0;//Variable pour se déplacer à l'intérieur de notre pointeur d'entiers.
 	
+	//On vérifie les messages qui iront bien à destination du bon client.
 	for(int i=0;i<sizeof(server.current_list_messages);i++){
 		for(int e=0;e<sizeof(server.current_list_messages[i].receiver_);e++){
-			if(server.current_list_messages[i].receiver_[e].id_customer==customer.id_customer){ //Si c'est le bon client alors ...
+			if(server.current_list_messages[i].receiver_[e].id_customer==customer.id_customer){ //Si c'est le bon client alors ... (Vérification de son id_customer)
 				//indice_bloc_message=i; //Stockage de son indice i dans le nouvel indice "indice_client" 
-				stockage_indice[indice_de_indice]=i;//Remplissage de notre tableau qui est toujours notre pointeur.
+				stockage_indice_message[indice_de_indice]=i;//Remplissage de notre tableau d'indices par les indices des bons messages stockés dans le dispacher.
 				nb_messages++;//Incrémentation du nombre de messages
 				indice_de_indice++; // Incrémentation de notre variable servant à gravir les cases mémoires du tableau/pointeur.
 			}//Fin if
@@ -45,14 +44,15 @@ char ** listener(serveur server, client customer){ //Lister tous les messages à
 	
 	for(int i=0;i<nb_messages;i++){
 		for(int e=0;e<indice_de_indice;e++){
-			//*message_clients[i]=server.current_list_messages[stockage_indice[e]].(*text);
-			message_clients[i]=server.current_list_messages[stockage_indice[e]].text;
+			//*message_clients[i]=server.current_list_messages[stockage_indice_message[e]].(*text);
+			//message_clients[i]=server.current_list_messages[stockage_indice_message[e]].text;
+			strcat(message_clients[i] , server.current_list_messages[stockage_indice_message[e]].text);// Affectation du corps du message stocké dans le dispacher au tableau de ponteurs qui va être retourné. 
 		}
 		
 	 }	
 	
-	free(stockage_indice); //On libère la mémoire
-	return message_clients; //Je ne sais pas si le return va fonctionner.
+	free(stockage_indice_message); //On libère la mémoire
+	return message_clients; //On retourne un tableau de pointeur sur des char.
 }
 
 /*Dans les paramètres de cette fonction 
@@ -70,7 +70,9 @@ void sender(char * text_message, client sender, client * receiver, serveur serve
 	server.current_list_message[indice_current_message].text=text_message; //On instancie le contenu du message avec le paramètre message qui est un pointeur de char.  
 	server.current_list_message[indice_current_message].sender_->pseudo=sender->pseudo; // On instancie l'émetteur du message à partir du paramètre customer de type client
 	//server.current_list_message->receiver_->pseudo=receiver->pseudo; // On instancie le destinataire du message à partir du paramètre receiver étant un pointeur sur le type client
-	server.current_list_message[indice_current_message].receiver_[sizeof(receiver)]; //Il faut initialiser la taille de ce tableau. Jsp si c'est bon !
+	//server.current_list_message[indice_current_message].receiver_[sizeof(receiver)]; //Il faut initialiser la taille de ce tableau. Jsp si c'est bon !
+	
+	sizeof(server.current_list_message[indice_current_message].receiver_)=sizeof(receiver); //Jsp si c'est bon !
 	int e=0;
 	for(int i=0;i<sizeof(receiver);i++){
 		server.current_list_message[indice_current_message].receiver_[e].pseudo=receiver[i].pseudo; // On instancie le destinataire du message à partir du paramètre receiver étant un pointeur sur le type client
@@ -86,7 +88,7 @@ void sender(char * text_message, client sender, client * receiver, serveur serve
 	//Mise en place des deux types de dates. 
 	/***************************************************************************************************/
 	/* Dates du jour sur lequel notre contenue entre dans le dispatcher */
-	server.current_list_message[indice_current_message].send_date.day=local_date->tm_mday;
+	server.current_list_message[indice_current_message].send_date.day=local_date->tm_mday; // local_date->tm_mday c'est comme si c'était 
 	server.current_list_message[indice_current_message].send_date.month=local_date->tm_mon;
 	server.current_list_message[indice_current_message].send_date.year=local_date->tm_year;
 	
