@@ -19,8 +19,6 @@ int indice_bloc_message=0;
 
 int * stockage_indice_message=NULL; //On veut stocker
 
-struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
-
 //Fonctions de la partie cliente
 
 //A tester
@@ -106,16 +104,16 @@ void sender(char * text_message, client sender, client * receiver, serveur serve
 
 //A tester
 //Une fonction pour se connecter à notre serveur. On utilisera cette fonction au tt début.
-int server_connection(char * adress_ip_server){ //Utilisation d'une socket
+int server_connection(serveur server){ //Utilisation d'une socket
 	//Rappel : Une socket renvoie un entier qui permet de se connecter à un serveur à long terme en créant tout d'abord un canal de communication puis en utilisant une autre fonction. L'entier en question s'appelle un descripteur de socket.
 	
 	//struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
-	//addr_server.sin_addr.s_addr=inet_addr(*adress_ip_server);
+	//addr_server.sin_addr.s_addr=inet_addr(*local_IP_adress);
 	
-	addr_server.sin_addr.s_addr=inet_addr(adress_ip_server); //Cette fonction sert à convertir une chaine de caractère (chaine de caractères de l'Adresse IP) en adresse compréhensible par le serveur.
+	server.addr_server.sin_addr.s_addr=inet_addr(local_IP_adress); //Cette fonction sert à convertir une chaine de caractère (chaine de caractères de l'Adresse IP) en adresse compréhensible par le serveur.
 	
-	addr_server.sin_family=AF_INET; //Ceci est pour indiquer le type d'adresse IP. AF_INET est instancié pour indiqué que nous utilisons une adresse IPv4.
-	addr_server.sin_port=htons(30000); //Il faut découvrir ce que signifie réélement la fonction htons.
+	server.addr_server.sin_family=AF_INET; //Ceci est pour indiquer le type d'adresse IP. AF_INET est instancié pour indiqué que nous utilisons une adresse IPv4.
+	server.addr_server.sin_port=htons(30000); // La fonction htons c'est pour le numéro de port'.
 	
 	int server_socket_describer=socket(AF_INET,SOCK_STREAM,0); 
 	/*
@@ -127,17 +125,16 @@ int server_connection(char * adress_ip_server){ //Utilisation d'une socket
 	
 	*/
 	
-	int bind_socket=bind(server_socket_describer,(const struct sockaddr *) &addr_server,sizeof(addr_server)); //Permet à notre socket de se connecter à l'adresse IP de notre serveur ! Il peut donner aussi un nom à notre socket.
+	int bind_socket=bind(server_socket_describer,(const struct sockaddr *) &server.addr_server,sizeof(server.addr_server)); //Permet à notre socket de se connecter à l'adresse IP de notre serveur ! Il peut donner aussi un nom à notre socket.
 	if(server_socket_describer<0){
 		perror("Connection failed !\n");//La connexion a échoué !
+	}else{
+		printf("Successful connection !\n");
 	}
 	
 	return bind_socket; //On peut décider de retourner le nom de socket 
 
 }
-
-
-
 
 
 //Il faut intégrer la partie sur SDL. Comment intégrer la bibliothèque SDL sur les fichier sources en C/C++

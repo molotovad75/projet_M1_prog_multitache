@@ -14,8 +14,7 @@
 #include "cote_client.h"
 
 //Variables du côté serveur
-//serveur server;
-sem_t semaphore;// Le semaphore sert à synchroniser des threads au sein d'un même processus ou bien entre plusieurs processus.
+//sem_t semaphore;// Le semaphore sert à synchroniser des threads au sein d'un même processus ou bien entre plusieurs processus.
 
 
 //server.IP_adress=local_IP_adress; //Association de l'adresse IP locale à notre serveur

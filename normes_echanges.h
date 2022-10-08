@@ -21,8 +21,7 @@ typedef struct{
 
 typedef struct{
 	char * pseudo;
-	const unsigned int id_customer;
-	int descriptor_customer;
+	unsigned int id_customer;
 }client;
 
 
@@ -38,9 +37,9 @@ typedef struct{
 typedef struct{
 	char * name;
 	message * current_list_messages;//C'est le dispatcher comme sur le sujet. C'est dans cette variable de la structure serveur qu'il faut mettre en action le multithreading.
-	char * IP_adress;
 	
-	struct in_addr ip_adress;
+	//char * IP_adress;
+	struct sockaddr_in addr_server; //sockaddr_in c'est un type de donnné permettant d'instancier une adresse IP dans la ligne de mire du socket.
 }serveur;
 //Structure serveur à officialiser !
 
