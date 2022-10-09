@@ -18,6 +18,11 @@ unsigned int indice_current_message=0; //Fonction sender(char * text_message, cl
 int indice_bloc_message=0;
 
 int * stockage_indice_message=NULL; //On veut stocker
+const char * local_IP_adress="127.0.0.1"; //localhost
+
+//Liste de clients
+client *list_customer_official; //Pour sauvegarder les mêmes lorsqu'on relance l'application
+
 
 //Fonctions de la partie cliente
 
@@ -134,6 +139,39 @@ int server_connection(serveur server){ //Utilisation d'une socket
 	
 	return bind_socket; //On peut décider de retourner le nom de socket 
 
+}
+
+void initialisation_id_customers(){//On initialise à -1 tous les champs
+	for(int i=0;i<sizeof(list_customer_official);i++){
+		list_customer_official[i].id_customer=-1;	
+	}
+}
+
+client * add_customer(client customer){ //Ajouter un nouveau client dans notre espace de stockage.
+	for(int i=0;i<sizeof(list_customer_official);i++){
+		if(list_customer_official[i].id_customer==-1){
+			list_customer_official[i].id_customer=customer.id_customer;
+		}
+	}
+	return list_customer_official;
+}
+
+char * customers_list(){
+	char * description=NULL;
+	
+	for(int i=0;i<sizeof(list_customer_official);i++){
+		description="Pseudo client numéro ";
+		strcat(description, i+1);
+		strcat(description, " :");
+		strcat(description, " ");
+		strcat(description, list_customer_official[i].pseudo);	
+		strcat(description, " ");
+		strcat(description, "ID client : ");
+		strcat(description, list_customer_official[i].id_customer);
+		strcat(description, "\n");
+	}
+	
+	return description;
 }
 
 

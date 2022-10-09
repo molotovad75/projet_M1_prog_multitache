@@ -11,7 +11,6 @@
 #include <semaphore.h>
 
 #include "normes_echanges.h"
-#include "cote_client.h"
 
 //Variables du côté serveur
 //sem_t semaphore;// Le semaphore sert à synchroniser des threads au sein d'un même processus ou bien entre plusieurs processus.
@@ -61,15 +60,16 @@ void client_sender(message message_to_send, serveur server){//Renvoi tous les me
 	pop_in_dispatcher(message_to_send,server.current_list_messages);//On retire le message de notre pile de message sur serveur.
 } 
 
-
+/*
 void accept_connexion(client customer,serveur server){ //Accepter les connexion entrantes
 
 
 }
+*/
 
-void wait_connection(client customer, serveur server){ //Mise en attente des connexions, si le serveur est surchargé de iencli.
+/*void wait_connection(client customer, serveur server){ //Mise en attente des connexions, si le serveur est surchargé de iencli.
 
 
 }
-
+*/
 
