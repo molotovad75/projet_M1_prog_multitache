@@ -1,3 +1,6 @@
+#include "cote_client.c"
+#include "cote_serveur.c"
+
 /*extern date date;*/
 /*extern client customer;*/
 /*extern message m;*/
@@ -22,4 +25,7 @@ int server_connection(serveur server);
 void initialisation_id_customers();
 client * add_customer(client customer);
 char * customers_list();
+
+
+
 

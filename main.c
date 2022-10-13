@@ -4,7 +4,7 @@
 #include <sys/types.h> 
 #include <unistd.h> 
 
-#include "cote_client.h"
+#include "fonctions.h"
 
 
 unsigned int identifiant_client=0;
