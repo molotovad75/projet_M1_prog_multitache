@@ -25,7 +25,7 @@
 void push_in_dispatcher(message m, message * pile_message){ //On enfile le message dans une pile ! Création éventuelle d'un thread, selon la date de validité du thread et par défaut sa date d'ajout.
 	//Notre fameux dispacher qui va stocker tous les messages en permanance tant que ce message ce sera pas arrivé à destination. message * pile_message
 	for(int i=0;i<sizeof(pile_message);i++){
-		if(pile_message[i]==NULL){
+		if(!pile_message[i]){
 			pile_message[i]=m;
 		
 		}
@@ -34,7 +34,7 @@ void push_in_dispatcher(message m, message * pile_message){ //On enfile le messa
 
 void pop_in_dispatcher(message m, message * pile_message){ //On retire le message de la pile et on met les valeurs de chaque indice du tableau à jour.
 	for(int i=0;i<sizeof(pile_message);i++){
-		if(pile_message[i]==m){
+		if(/*Texte du message*/ strcmp(pile_message[i].text,m.text)==0 && /*On passe au client destinataire du message*/ strcmp(pile_message[i].sender_.pseudo,m.sender_.pseudo)==0 && pile_message[i].sender_.id_customer==m.sender_.id_customer && /*On passe à la date d'envoi*/ /*Jour*/pile_message[i].send_date.day==m.send_date.day && /*mois*/ pile_message[i].send_date.month==m.send_date.month && /*année*/ pile_message[i].send_date.year==m.send_date.year /*On passe à la date de validité*/ ){//
 			for(int e=i;e<sizeof(pile_message)-1;e++){
 				pile_message[e]=pile_message[e+1]; //Technique d'écrasement.
 			}		
