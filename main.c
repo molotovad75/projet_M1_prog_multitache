@@ -7,17 +7,18 @@
 #include "fonctions.h"
 
 
-unsigned int identifiant_client=0;
+
 
 int main(){
 	//création des threads
 	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Se connecter au serveur\n3 - Voir les autres clients\n4 - Quittez l'application !");
 	int initialisation_faite=0;
 	int reponse=0;
+	unsigned int identifiant_client=0;
 	while(1){
 		reponse=0;
 		scanf("%d",&reponse);
-		client customer;
+		
 		
 		
 		if(initialisation_faite==0){
@@ -29,12 +30,13 @@ int main(){
 			case 1:
 				
 				printf("Veuillez entrer le nouveau pseudo de ce client\n");
+				client customer;
 				customer.pseudo=malloc(sizeof(char)*10);	
 				
 				scanf("%s",customer.pseudo); //customer.pseudo est un pointeur
 				customer.id_customer=identifiant_client;
 				identifiant_client++;	
-				printf("%s est enregistré en tant que nouveau client et à le numéro unique %d !\n",customer.pseudo,customer.id_customer);
+				printf("%s est enregistré en tant que nouveau client et à le numéro unique %d !\n",customer.pseudo, customer.id_customer);
 				//On ajoute le nouveau client.
 				add_customer(customer);
 				free(customer.pseudo);

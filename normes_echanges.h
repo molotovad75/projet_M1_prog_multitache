@@ -19,7 +19,7 @@ typedef struct{
 typedef struct{
 	char * pseudo;
 	int id_customer;
-}client;
+}client; //Il n'y a rien à expliquer dans cette structure de type de données
 
 
 typedef struct{

@@ -10,7 +10,12 @@
 #include <time.h>
 #include <semaphore.h>
 
-#include "normes_echanges.h"
+#ifndef __NORMES_ECHANGES_H__
+#define __NORMES_ECHANGES_H__ 
+	#include "normes_echanges.h"
+#endif
+
+/*#include "normes_echanges.h"*/
 
 //Variables génrales du fichier source
 
@@ -71,15 +76,23 @@ void sender(char * text_message, client sender, client * receiver, serveur serve
 	//Il faut que current_list_messages soit initialiser dans le main ou dans le coté serveur.
 	
 	server.current_list_messages[indice_current_message].text=text_message; //On instancie le contenu du message avec le paramètre message qui est un pointeur de char.  
-	server.current_list_messages[indice_current_message].sender_->pseudo=sender->pseudo; // On instancie l'émetteur du message à partir du paramètre customer de type client
+	server.current_list_messages[indice_current_message].sender_.pseudo=sender.pseudo; // On instancie l'émetteur du message à partir du paramètre customer de type client
 	//server.current_list_messages->receiver_->pseudo=receiver->pseudo; // On instancie le destinataire du message à partir du paramètre receiver étant un pointeur sur le type client
 	//server.current_list_messages[indice_current_message].receiver_[sizeof(receiver)]; //Il faut initialiser la taille de ce tableau. Jsp si c'est bon !
 	
-	sizeof(server.current_list_messages[indice_current_message].receiver_)=sizeof(receiver); //Jsp si c'est bon !
+	int taille_receiver_=0;
+	//Condition if peut être à changer
+	if(sizeof(server.current_list_messages[indice_current_message].receiver_)>=sizeof(receiver)){
+		taille_receiver_=sizeof(receiver);
+	}else{
+		taille_receiver_=sizeof(server.current_list_messages[indice_current_message].receiver_);
+	}
+	
+	//sizeof(server.current_list_messages[indice_current_message].receiver_)=sizeof(receiver); //Jsp si c'est bon !
 	int e=0;
-	for(int i=0;i<sizeof(receiver);i++){
+	for(int i=0;i<taille_receiver_;i++){ //Avant c'était sizeof(receiver)
 		server.current_list_messages[indice_current_message].receiver_[e].pseudo=receiver[i].pseudo; // On instancie le destinataire du message à partir du paramètre receiver étant un pointeur sur le type client
-		//server.current_list_messages->receiver_[e].id_customer=id_client;
+		server.current_list_messages[indice_current_message].receiver_[e].id_customer=receiver[i].id_customer;
 		e++;
 	}
 	//Dans le main il va falloir initialiser une liste de clients
@@ -158,16 +171,19 @@ client * add_customer(client customer){ //Ajouter un nouveau client dans notre e
 
 char * customers_list(){
 	char * description=NULL;
-	
+	//char * texte_actuel=NULL;//Texte qui doit être modifier
 	for(int i=0;i<sizeof(list_customer_official);i++){
 		description="Pseudo client numéro ";
-		strcat(description, (char *) i+1);
+		//texte_actuel="%d",(i+1);
+		vasprintf(&description, "%d", i+1);
+		//strcat(description, (char *) i+1);
 		strcat(description, " :");
 		strcat(description, " ");
 		strcat(description, list_customer_official[i].pseudo);	
 		strcat(description, " ");
 		strcat(description, "ID client : ");
-		strcat(description, (char *) list_customer_official[i].id_customer);
+		vasprintf(&description, "%d", list_customer_official[i].id_customer);
+		//strcat(description, (char *) list_customer_official[i].id_customer);
 		strcat(description, "\n");
 	}
 	
