@@ -60,7 +60,7 @@ char * listener(serveur server, client customer){ //Lister tous les messages à 
 		strcat(message_clients , "\n");
 	}
 		
-	free(message_clients);		
+	free(message_clients);
 	free(stockage_indice_message); //On libère la mémoire
 	//free(message_clients);
 	return message_clients; //On retourne un tableau de pointeur sur des char.
@@ -183,7 +183,7 @@ char * customers_list(){
 	
 	for(int i=0;i<sizeof(list_customer_official);i++){
 		description="Pseudo client numéro ";
-		sprintf(description,"%d",i+1); //sprintf fait la même chose que itoa()
+		sprintf(description,"%d",i+1); //sprintf() fait la même chose que itoa()
 		//itoa(i+1,description,10);
 		strcat(description, " :");
 		strcat(description, " ");
