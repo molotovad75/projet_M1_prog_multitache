@@ -10,9 +10,11 @@
 #include <time.h>
 #include <semaphore.h>
 
+#include <stdarg.h>
+
 #ifndef __NORMES_ECHANGES_H__
 #define __NORMES_ECHANGES_H__ 
-	#include "normes_echanges.h"
+#include "normes_echanges.h"
 #endif
 
 /*#include "normes_echanges.h"*/
@@ -21,19 +23,17 @@
 
 unsigned int indice_current_message=0; //Fonction sender(char * text_message, client sender, client * receiver, serveur server)
 int indice_bloc_message=0;
-
-int * stockage_indice_message=NULL; //On veut stocker
 const char * local_IP_adress="127.0.0.1"; //localhost
 
 //Liste de clients
-client *list_customer_official; //Pour sauvegarder les mêmes lorsqu'on relance l'application
+client * list_customer_official; //Pour sauvegarder les mêmes lorsqu'on relance l'application
 
 
 //Fonctions de la partie cliente
 
-//A tester
-char ** listener(serveur server, client customer){ //Lister tous les messages à destination d'un seul client en provenance du serveur 
+char * listener(serveur server, client customer){ //Lister tous les messages à destination d'un seul client en provenance du serveur 
 	unsigned int nb_messages=0;
+	int * stockage_indice_message=NULL; //On veut stocker
 	stockage_indice_message=malloc(sizeof(int));//Allocation de mémoire dynamique. Fonction malloc()
 	int indice_de_indice=0;//Variable pour se déplacer à l'intérieur de notre pointeur d'entiers.
 	
@@ -43,23 +43,26 @@ char ** listener(serveur server, client customer){ //Lister tous les messages à
 			if(server.current_list_messages[i].receiver_[e].id_customer==customer.id_customer){ //Si c'est le bon client alors ... (Vérification de son id_customer)
 				//indice_bloc_message=i; //Stockage de son indice i dans le nouvel indice "indice_client" 
 				stockage_indice_message[indice_de_indice]=i;//Remplissage de notre tableau d'indices par les indices des bons messages stockés dans le dispacher.
+				//Associer le client au bon message.
+				
 				nb_messages++;//Incrémentation du nombre de messages
 				indice_de_indice++; // Incrémentation de notre variable servant à gravir les cases mémoires du tableau/pointeur.
 			}//Fin if
 		}//Fin for
 	}//Fin for
-	char * message_clients[nb_messages]; //Tableau de pointeurs que nous allons renvoyer de par cette fonction.
+	char * message_clients=NULL; //Tableau de pointeurs que nous allons renvoyer de par cette fonction.
+	message_clients=malloc(sizeof(char)*10);//La taille pour un message
 	
-	for(int i=0;i<nb_messages;i++){
-		for(int e=0;e<indice_de_indice;e++){
-			//*message_clients[i]=server.current_list_messages[stockage_indice_message[e]].(*text);
-			//message_clients[i]=server.current_list_messages[stockage_indice_message[e]].text;
-			strcat(message_clients[i] , server.current_list_messages[stockage_indice_message[e]].text);// Affectation du corps du message stocké dans le dispacher au tableau de ponteurs qui va être retourné. 
-		}
 		
-	 }	
-	
+	for(int e=0;e<indice_de_indice;e++){
+		//Ceci est pour un client
+		strcat(message_clients , server.current_list_messages[stockage_indice_message[e]].text);// Affectation du corps du message stocké dans le dispacher au tableau de ponteurs qui va être retourné. 
+		strcat(message_clients , "\n");
+	}
+		
+	free(message_clients);		
 	free(stockage_indice_message); //On libère la mémoire
+	//free(message_clients);
 	return message_clients; //On retourne un tableau de pointeur sur des char.
 }
 
@@ -72,13 +75,12 @@ Pour n clients cibles il va falloir boucler sur cette fonction.*/
 //A tester
 void sender(char * text_message, client sender, client * receiver, serveur server){ //Envoi un message à un autre client via le serveur : Dans le paramètre receiver on attend un tableau de clients allant recevoir le message.
 	
-	
 	//Il faut que current_list_messages soit initialiser dans le main ou dans le coté serveur.
 	
 	server.current_list_messages[indice_current_message].text=text_message; //On instancie le contenu du message avec le paramètre message qui est un pointeur de char.  
 	server.current_list_messages[indice_current_message].sender_.pseudo=sender.pseudo; // On instancie l'émetteur du message à partir du paramètre customer de type client
-	//server.current_list_messages->receiver_->pseudo=receiver->pseudo; // On instancie le destinataire du message à partir du paramètre receiver étant un pointeur sur le type client
-	//server.current_list_messages[indice_current_message].receiver_[sizeof(receiver)]; //Il faut initialiser la taille de ce tableau. Jsp si c'est bon !
+	
+	//m.text=text_message;
 	
 	int taille_receiver_=0;
 	//Condition if peut être à changer
@@ -88,13 +90,16 @@ void sender(char * text_message, client sender, client * receiver, serveur serve
 		taille_receiver_=sizeof(server.current_list_messages[indice_current_message].receiver_);
 	}
 	
-	//sizeof(server.current_list_messages[indice_current_message].receiver_)=sizeof(receiver); //Jsp si c'est bon !
+	
+	//Ici on déroule toute la liste des clients receveurs
 	int e=0;
 	for(int i=0;i<taille_receiver_;i++){ //Avant c'était sizeof(receiver)
 		server.current_list_messages[indice_current_message].receiver_[e].pseudo=receiver[i].pseudo; // On instancie le destinataire du message à partir du paramètre receiver étant un pointeur sur le type client
 		server.current_list_messages[indice_current_message].receiver_[e].id_customer=receiver[i].id_customer;
 		e++;
 	}
+	
+	
 	//Dans le main il va falloir initialiser une liste de clients
 	
 	//Mise en place de la date à laquelle le message est envoyé.
@@ -115,7 +120,10 @@ void sender(char * text_message, client sender, client * receiver, serveur serve
 	/***************************************************************************************************/	
 	
 	//Le sémaphore doit être utilisé dans la partie serveur.
-	push_in_dispatcher(server.current_list_messages[indice_current_message]); //Le message est inséré par la suite dans le dispatcher. Donc dans une pile ou le multithreading et les sémaphores seront appliqués !
+	//push_in_dispatcher(server.current_list_messages[indice_current_message],server.current_list_messages); 
+	//server.current_list_messages[indice_current_message] est le message à envoyer
+	//server.current_list_messages est la pile de message.
+	//Le message est inséré par la suite dans le dispatcher. Donc dans une pile ou le multithreading et les sémaphores seront appliqués !
 	
 	indice_current_message++; //Incrémentation de l'indice. 
 }
@@ -172,18 +180,18 @@ client * add_customer(client customer){ //Ajouter un nouveau client dans notre e
 char * customers_list(){
 	char * description=NULL;
 	//char * texte_actuel=NULL;//Texte qui doit être modifier
+	
 	for(int i=0;i<sizeof(list_customer_official);i++){
 		description="Pseudo client numéro ";
-		//texte_actuel="%d",(i+1);
-		vasprintf(&description, "%d", i+1);
-		//strcat(description, (char *) i+1);
+		sprintf(description,"%d",i+1); //sprintf fait la même chose que itoa()
+		//itoa(i+1,description,10);
 		strcat(description, " :");
 		strcat(description, " ");
 		strcat(description, list_customer_official[i].pseudo);	
 		strcat(description, " ");
 		strcat(description, "ID client : ");
-		vasprintf(&description, "%d", list_customer_official[i].id_customer);
-		//strcat(description, (char *) list_customer_official[i].id_customer);
+		sprintf(description,"%d",i+1); //sprintf fait la même chose que itoa()
+		//itoa(i+1,description,10); //itoa() c'est la fonction pour convertir un entier en une chaine de caractères 
 		strcat(description, "\n");
 	}
 	

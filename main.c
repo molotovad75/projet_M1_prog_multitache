@@ -4,9 +4,20 @@
 #include <sys/types.h> 
 #include <unistd.h> 
 
-#include "fonctions.h"
+#ifndef __NORMES_ECHANGES_H__
+#define __NORMES_ECHANGES_H__ 
+#include "normes_echanges.h"
+#endif
 
+#ifndef __COTE_CLIENT_H__
+#define __COTE_CLIENT_H__ 
+#include "cote_client.h"	
+#endif
 
+#ifndef __COTE_SERVEUR_H__
+#define __COTE_SERVEUR_H__ 
+#include "cote_serveur.h"	
+#endif
 
 
 int main(){
