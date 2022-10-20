@@ -21,66 +21,21 @@
 #include "cote_serveur.h"	
 #endif
 
-//Liste de clients
-
-client * list_customer_official=NULL; //Pour sauvegarder les mêmes lorsqu'on relance l'application
-
-
-void initialisation_id_customers(){//On initialise à -1 tous les champs: La première fonction a être exécuté dans le main.
-	list_customer_official=malloc(sizeof(client)*10);//On initialise la taille d'une liste de client.
-	for(int i=0;i<sizeof(list_customer_official)/sizeof(client);i++){
-		list_customer_official[i].id_customer=-1;	
-	}
-}
-
-
-client * add_customer(client customer){ //Ajouter un nouveau client dans notre espace de stockage. Il faut l'utiliser après si et seulement si la fonction initialisation_id_customers() est lancée.
-	for(int i=0;i<sizeof(list_customer_official)/sizeof(client);i++){
-		if(list_customer_official[i].id_customer==-1){
-			list_customer_official[i].id_customer=customer.id_customer;
-			list_customer_official[i].pseudo=customer.pseudo;
-		}
-	}
-	return list_customer_official;
-}
-
-
-
-char * customers_list(){ //Consulter la liste de tous les clients de notre application. Il faut l'utiliser après si et seulement si la fonction initialisation_id_customers() est lancée.
-	char * description=NULL;
-	//char * texte_actuel=NULL;//Texte qui doit être modifier
-	
-	for(int i=0;i<sizeof(list_customer_official)/sizeof(client);i++){
-		description="Pseudo client numéro ";
-		sprintf(description,"%d",i+1); //sprintf() fait la même chose que itoa()
-		//itoa(i+1,description,10);
-		strcat(description, " :");
-		strcat(description, " ");
-		strcat(description, list_customer_official[i].pseudo);	
-		strcat(description, " ");
-		strcat(description, "ID client : ");
-		sprintf(description,"%d",i+1); //sprintf fait la même chose que itoa()
-		//itoa(i+1,description,10); //itoa() c'est la fonction pour convertir un entier en une chaine de caractères 
-		strcat(description, "\n");
-	}
-	
-	return description;
-}
-
-
+client * list_customer_official=NULL; //Liste de clients. Pour sauvegarder les mêmes lorsqu'on relance l'application
+unsigned int identifiant_client=0;//Identification officielle lors de l'inscription d'un client.
+int initialisation_faite=0; //variable servant de décision au remplissage d'une liste vide de client ayant pour identifiant le nombre -1.
 
 void run_application(){
 	//création des threads
 	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Se connecter au serveur\n3 - Voir les autres clients\n4 - Quittez l'application !\n");
-	int initialisation_faite=0;
+	
 	int reponse=0;
-	unsigned int identifiant_client=0;
-	//while(1){
 	reponse=0;
 	scanf("%d",&reponse);	
+	list_customer_official=malloc(sizeof(client));
 	
 	if(initialisation_faite==0){
-		initialisation_id_customers();//initialisation des champs d'ID à -1.
+		initialisation_id_customers(list_customer_official);//initialisation des champs d'ID à -1.
 		initialisation_faite=1;
 	}
 	client customer;
@@ -89,7 +44,7 @@ void run_application(){
 			
 			printf("Veuillez entrer le nouveau pseudo de ce client\n");
 			
-			customer.pseudo=malloc(sizeof(char)*10);	
+			customer.pseudo=malloc(sizeof(char));	
 			
 			scanf("%s",customer.pseudo); //customer.pseudo est un pointeur
 			customer.id_customer=identifiant_client;
@@ -97,38 +52,41 @@ void run_application(){
 			identifiant_client++;	
 			printf("%s est enregistré en tant que nouveau client et à le numéro d'identifiant unique %d !\n",customer.pseudo, customer.id_customer);
 			//On ajoute le nouveau client.
-			add_customer(customer);
+			add_customer(customer,list_customer_official);
 			free(customer.pseudo);
+			break;
 			
 		case 2:
-			
+			printf("Bonjour !\n");
+			break;
 		case 3: //Voir les autre clients.
-			printf("%s",customers_list());
-			
+			printf("%s\n",customers_list(list_customer_official));
+			break;
 		case 4: //Quitter l'application
 			//system("kill -l %ld",getpid()); //Tuer le processus en cours d'éxécution (Ne fonctionne pas sur tous les systemes d'exploitation). Fonctionne uniquement sur Linux.
-			exit(0);//On quitte programme en laissant un succès		
-		default:
+			free(list_customer_official);	
+			exit(0);//On quitte programme en laissant un succès	
+			break;	
+		default: //Quitter l'application
+			free(list_customer_official);
 			exit(0);//On quitte programme en laissant un succès
+			break;
 	}
 	
 	char * recommencer=malloc(sizeof(char));
-	printf("Voulez-vous recommencez ? [Oui - O - Yes - Y] - [Non - N - No]\n");
+	printf("Voulez-vous recommencez ? [Oui/O/o/Yes/Y/y/oui/yes] - [Non/N/No/n/non/no/n]\n");
 	scanf("%s",recommencer);
-	if(strcmp(recommencer,"Oui")==0 || strcmp(recommencer,"O")==0 || strcmp(recommencer,"Yes")==0 || strcmp(recommencer,"Y")==0){
+	if(strcmp(recommencer,"Oui")==0 || strcmp(recommencer,"O")==0 || strcmp(recommencer,"o")==0 || strcmp(recommencer,"oui")==0 || strcmp(recommencer,"Yes")==0 || strcmp(recommencer,"Y")==0 || strcmp(recommencer,"y")==0 || strcmp(recommencer,"yes")==0){
 		run_application();
-	}else if(strcmp(recommencer,"Non")==0 || strcmp(recommencer,"No")==0 || strcmp(recommencer,"N")==0){
+	}else if(strcmp(recommencer,"Non")==0  || strcmp(recommencer,"N")==0  || strcmp(recommencer,"No")==0 || strcmp(recommencer,"n")==0 || strcmp(recommencer,"non")==0 || strcmp(recommencer,"no")==0 || strcmp(recommencer,"n")==0){
+		free(list_customer_official);
 		exit(0);
 	}
 	free(recommencer);
-	
-	//free(list_customer_official);
-	
-	//}
-
 }
 
-int main(){
+
+int main(void){
 	run_application();
 	return 0;
 }
