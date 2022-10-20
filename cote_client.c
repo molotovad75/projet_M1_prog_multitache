@@ -17,16 +17,13 @@
 #include "normes_echanges.h"
 #endif
 
-/*#include "normes_echanges.h"*/
+
 
 //Variables génrales du fichier source
 
 unsigned int indice_current_message=0; //Fonction sender(char * text_message, client sender, client * receiver, serveur server)
 int indice_bloc_message=0;
 const char * local_IP_adress="127.0.0.1"; //localhost
-
-//Liste de clients
-client * list_customer_official; //Pour sauvegarder les mêmes lorsqu'on relance l'application
 
 
 //Fonctions de la partie cliente
@@ -162,41 +159,18 @@ int server_connection(serveur server){ //Utilisation d'une socket
 
 }
 
-void initialisation_id_customers(){//On initialise à -1 tous les champs
-	for(int i=0;i<sizeof(list_customer_official);i++){
-		list_customer_official[i].id_customer=-1;	
-	}
-}
 
-client * add_customer(client customer){ //Ajouter un nouveau client dans notre espace de stockage.
+
+/*client * add_customer(client customer){ //Ajouter un nouveau client dans notre espace de stockage.
 	for(int i=0;i<sizeof(list_customer_official);i++){
 		if(list_customer_official[i].id_customer==-1){
 			list_customer_official[i].id_customer=customer.id_customer;
 		}
 	}
 	return list_customer_official;
-}
+}*/
 
-char * customers_list(){
-	char * description=NULL;
-	//char * texte_actuel=NULL;//Texte qui doit être modifier
-	
-	for(int i=0;i<sizeof(list_customer_official);i++){
-		description="Pseudo client numéro ";
-		sprintf(description,"%d",i+1); //sprintf() fait la même chose que itoa()
-		//itoa(i+1,description,10);
-		strcat(description, " :");
-		strcat(description, " ");
-		strcat(description, list_customer_official[i].pseudo);	
-		strcat(description, " ");
-		strcat(description, "ID client : ");
-		sprintf(description,"%d",i+1); //sprintf fait la même chose que itoa()
-		//itoa(i+1,description,10); //itoa() c'est la fonction pour convertir un entier en une chaine de caractères 
-		strcat(description, "\n");
-	}
-	
-	return description;
-}
+
 
 
 //Il faut intégrer la partie sur SDL. Comment intégrer la bibliothèque SDL sur les fichier sources en C/C++
