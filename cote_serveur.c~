@@ -1,4 +1,4 @@
-//Pour copier sur nano : Il faut selectionner (souris et ou clavier ou Crtl + 6) et pour copier la sélection :  Alt +Shift + 6
+//Pour copier : Il faut selectionner (souris et ou clavier ou Crtl + 6) et pour copier la sélection :  Alt +Shift + 6
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>

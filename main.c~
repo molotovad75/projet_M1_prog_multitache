@@ -36,7 +36,7 @@ void run_application(){
 
 	int reponse=0;
 	reponse=0;
-	scanf("%d",&reponse);
+	scanf("%d",&reponse);	
 	list_customer_official=malloc(sizeof(client));
 
 	if(initialisation_faite==0){
