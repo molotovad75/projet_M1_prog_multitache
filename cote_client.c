@@ -170,21 +170,21 @@ int server_connection(serveur server){ //Utilisation d'une socket
 }*/
 
 void initialisation_id_customers(client * list_customer_official){//On initialise à -1 tous les champs: La première fonction a être exécuté dans le main.
-	list_customer_official=malloc(sizeof(client)*10);//On initialise la taille d'une liste de client.
-	for(int i=0;i<sizeof(list_customer_official)/sizeof(client);i++){
+	list_customer_official=malloc(sizeof(client)*9);//On initialise la taille d'une liste de client.
+	for(int i=0;i<sizeof(list_customer_official);i++){
 		list_customer_official[i].id_customer=-1;
 	}
 }
 
 
-client * add_customer(client customer,client * list_customer_official){ //Ajouter un nouveau client dans notre espace de stockage. Il faut l'utiliser après si et seulement si la fonction initialisation_id_customers() est lancée.
-	for(int i=0;i<sizeof(list_customer_official)/sizeof(client);i++){
+void add_customer(client customer,client * list_customer_official){ //Ajouter un nouveau client dans notre espace de stockage. Il faut l'utiliser après si et seulement si la fonction initialisation_id_customers() est lancée.
+	for(int i=0;i<sizeof(list_customer_official);i++){
 		if(list_customer_official[i].id_customer==-1){
 			list_customer_official[i].id_customer=customer.id_customer;
 			list_customer_official[i].pseudo=customer.pseudo;
 		}
 	}
-	return list_customer_official;
+	//return list_customer_official;
 }
 
 char * customers_list(client * list_customer_official){ //Consulter la liste de tous les clients de notre application. Il faut l'utiliser après si et seulement si la fonction initialisation_id_customers() est lancée.
@@ -192,12 +192,12 @@ char * customers_list(client * list_customer_official){ //Consulter la liste de 
 	//char * texte_actuel=NULL;//Texte qui doit être modifier
 	description=malloc(sizeof(char));
 
-	int taille_liste_cliente=sizeof(list_customer_official)/sizeof(client);
-	char * bloc_descriptif[];
+	int taille_liste_cliente=sizeof(list_customer_official);
+	//char * bloc_descriptif[];
 
 	for(int i=0;i<taille_liste_cliente;i++){
 		description="Pseudo client numéro ";
-		sprintf(description,"%d",i+1); //sprintf() fait la même chose que itoa()
+		sprintf(description,"%d",i); //sprintf() fait la même chose que itoa()
 		//itoa(i+1,description,10);
 		strcat(description, " :");
 		strcat(description, " ");
@@ -207,8 +207,9 @@ char * customers_list(client * list_customer_official){ //Consulter la liste de 
 		sprintf(description,"%d",list_customer_official[i].id_customer); //sprintf fait la même chose que itoa()
 		//itoa(i+1,description,10); //itoa() c'est la fonction pour convertir un entier en une chaine de caractères
 		strcat(description, "\n");
-
+		printf("%s",description);
 	}
+	
 	free(description);
 	return description;
 }

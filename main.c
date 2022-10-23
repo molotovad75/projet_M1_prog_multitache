@@ -6,7 +6,7 @@
 #include <sys/types.h> 
 #include <unistd.h> 
 #include <string.h>
-
+#include <SDL2/SDL.h>
 
 #ifndef __NORMES_ECHANGES_H__
 #define __NORMES_ECHANGES_H__ 
@@ -20,7 +20,7 @@
 
 #ifndef __COTE_SERVEUR_H__
 #define __COTE_SERVEUR_H__ 
-#include "cote_serveur.h"
+#include "cote_serveur.h"	
 #endif
 
 client * list_customer_official=NULL; //Liste de clients. Pour sauvegarder les mêmes lorsqu'on relance l'application
@@ -32,18 +32,31 @@ pid_t * processus_fils;//On va créer une liste de processus fils.
 
 void run_application(){
 	//création des threads
+	
+	//Création d'une fenêtre graphique en SDL, la bibliothèque officielle de GUI en C/C++
+	SDL_Window * window=NULL;
+	if(SDL_Init(SDL_INIT_EVERYTHING)!=0){
+		SDL_Log("Erreur d'initialisation de la SDL2 > %s \n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+	window=SDL_CreateWindow("EFREI - Application client serveur",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,500,500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
+	SDL_Delay(10000);//On laisse la fenètre ouverte pendant 10 secondes.
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	
+	
 	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Se connecter au serveur\n3 - Voir les autres clients\n4 - Quittez l'application !\n");
-
+	client customer;
 	int reponse=0;
 	reponse=0;
 	scanf("%d",&reponse);
-	list_customer_official=malloc(sizeof(client));
+	//list_customer_official=malloc(sizeof(client));
 
 	if(initialisation_faite==0){
 		initialisation_id_customers(list_customer_official);//initialisation des champs d'ID à -1.
 		initialisation_faite=1;
 	}
-	client customer;
+	
 	switch(reponse){
 		case 1:
 
@@ -52,10 +65,10 @@ void run_application(){
 			customer.pseudo=malloc(sizeof(char));
 			scanf("%s",customer.pseudo); //customer.pseudo est un pointeur
 			customer.id_customer=identifiant_client;
-
 			identifiant_client++;
 			printf("%s est enregistré en tant que nouveau client et à le numéro d'identifiant unique %d !\n",customer.pseudo, customer.id_customer);
 			//On ajoute le nouveau client.
+			printf("%d est la taille de list_customer_official\n",sizeof(list_customer_official));
 			add_customer(customer,list_customer_official);
 			free(customer.pseudo);
 			break;
@@ -64,7 +77,8 @@ void run_application(){
 			printf("Bonjour !\n");
 			break;
 		case 3: //Voir les autre clients.
-			printf("%s\n",customers_list(list_customer_official));
+			//printf("%s\n",);
+			customers_list(list_customer_official);
 			break;
 		case 4: //Quitter l'application
 			//system("kill -l %ld",getpid()); //Tuer le processus en cours d'éxécution (Ne fonctionne pas sur tous les systemes d'exploitation). Fonctionne uniquement sur Linux.
