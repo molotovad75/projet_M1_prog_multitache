@@ -34,16 +34,46 @@ void run_application(){
 	//création des threads
 	
 	//Création d'une fenêtre graphique en SDL, la bibliothèque officielle de GUI en C/C++
-	SDL_Window * window=NULL;
-	if(SDL_Init(SDL_INIT_EVERYTHING)!=0){
-		SDL_Log("Erreur d'initialisation de la SDL2 > %s \n", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
-	window=SDL_CreateWindow("EFREI - Application client serveur",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,500,500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
-	SDL_Delay(10000);//On laisse la fenètre ouverte pendant 10 secondes.
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-	
+/*	SDL_Window * window=NULL;*/
+/*	SDL_Renderer * renderer=NULL;*/
+/*	if(SDL_Init(SDL_INIT_EVERYTHING)!=0){*/
+/*		SDL_Log("Erreur d'initialisation de la SDL2 > %s \n", SDL_GetError());*/
+/*		exit(EXIT_FAILURE);*/
+/*	}*/
+/*	*/
+/*	renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_SOFTWARE);*/
+/*	SDL_SetRenderDrawColor(renderer,255,255,255,255);//C'est du blanc*/
+/*	*/
+/*	SDL_Color white={255,255,255,255};*/
+/*	setWindowColor(renderer,white);//Toute la fenêtre en blanc.*/
+/*	*/
+/*	SDL_Surface *surface=NULL;*/
+/*	Uint32 pixels[255 * 255];*/
+/*	surface = SDL_CreateRGBSurfaceWithFormatFrom(pixels, 255, 255, 255, 255 * sizeof(Uint32), SDL_PIXELFORMAT_RGBA8888);*/
+/*	*/
+/*	window=SDL_CreateWindow("EFREI - Application client serveur",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,500,500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);*/
+/*	*/
+/*	SDL_Delay(10000);//On laisse la fenètre ouverte pendant 10 secondes.*/
+/*	*/
+/*	*/
+/*	*/
+/*	SDL_DestroyWindow(window);//On détruit la fenêtre*/
+/*	free(surface);*/
+/*	SDL_Quit();*/
+	int running=1;
+	 SDL_Init(SDL_INIT_VIDEO);
+	    SDL_Window *window = SDL_CreateWindow("EFREI - Application client serveur", 100, 100, 640, 480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
+	    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	    SDL_RenderClear(renderer);
+	    SDL_Delay(5000);
+	    SDL_RenderPresent(renderer);
+	    SDL_Delay(5000);
+	    
+	    
+	    SDL_DestroyRenderer(renderer);
+	    SDL_DestroyWindow(window);
+	    SDL_Quit();
 	
 	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Se connecter au serveur\n3 - Voir les autres clients\n4 - Quittez l'application !\n");
 	client customer;
