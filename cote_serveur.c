@@ -11,6 +11,9 @@
 #include <time.h>
 #include <semaphore.h>
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
 
 #ifndef __NORMES_ECHANGES_H__
 #define __NORMES_ECHANGES_H__ 
