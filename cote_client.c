@@ -138,7 +138,6 @@ int server_connection(serveur server){ //Utilisation d'une socket
 	//addr_server.sin_addr.s_addr=inet_addr(*local_IP_adress);
 	
 	server.addr_server.sin_addr.s_addr=inet_addr(local_IP_adress); //Cette fonction sert à convertir une chaine de caractère (chaine de caractères de l'Adresse IP) en adresse compréhensible par le serveur.
-	
 	server.addr_server.sin_family=AF_INET; //Ceci est pour indiquer le type d'adresse IP. AF_INET est instancié pour indiqué que nous utilisons une adresse IPv4.
 	server.addr_server.sin_port=htons(30000); // La fonction htons c'est pour le numéro de port'.
 	
@@ -153,13 +152,16 @@ int server_connection(serveur server){ //Utilisation d'une socket
 	*/
 
 	int bind_socket=bind(server_socket_describer,(const struct sockaddr *) &server.addr_server,sizeof(server.addr_server)); //Permet à notre socket de se connecter à l'adresse IP de notre serveur ! Il peut donner aussi un nom à notre socket.
+	int issue=0;
 	if(server_socket_describer<0){
-		perror("Connection failed !\n");//La connexion a échoué !
+		perror("Connection failed !\n");//La connexion a échoué ! On retournera	-1
+		issue=-1;
 	}else{
-		printf("Successful connection !\n");
+		printf("Successful connection !\n");//La connexion a réussi ! On retournera 0
+		issue=0;
 	}
 
-	return bind_socket; //On peut décider de retourner le nom de socket 
+	return issue; //On peut décider de retourner le nom de socket 
 
 }
 
@@ -173,7 +175,7 @@ int server_connection(serveur server){ //Utilisation d'une socket
 }*/
 
 void initialisation_id_customers(client * list_customer_official){//On initialise à -1 tous les champs: La première fonction a être exécuté dans le main.
-	list_customer_official=malloc(sizeof(client)*9);//On initialise la taille d'une liste de client.
+	//On initialise la taille d'une liste de client.
 	for(int i=0;i<sizeof(list_customer_official);i++){
 		list_customer_official[i].id_customer=-1;
 	}

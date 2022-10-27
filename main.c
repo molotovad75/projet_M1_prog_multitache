@@ -32,11 +32,131 @@ int initialisation_faite=0; //variable servant de décision au remplissage d'une
 //Processus
 pid_t * processus_fils;//On va créer une liste de processus fils. Un processus fils par clients crées
 //Tableau de threads.
-thrd_t * liste_threads=malloc(sizeof(thrd_t));//Initialisation d'un thread avec la taille  pour la taille d'un seul.
+thrd_t * liste_threads;//Initialisation d'un thread avec la taille  pour la taille d'un seul. =malloc(sizeof(thrd_t))
 
 void run_application(){
 	//création des threads
+	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Envoyer un message\n3 - Voir les autres clients\n4 - Quittez l'application !\n");
+	client customer;
+	char * nom_client=NULL;
+	int reponse=0;
+	scanf("%d",&reponse);
+	unsigned int indice_thread=0;
+	if(initialisation_faite==0){
 	
+		list_customer_official=(client *) malloc(sizeof(client));//Allocation de x éléments pour la taille d'un type de ce même élément (Structure ou variable)
+		//initialisation_id_customers(list_customer_official);//initialisation des champs d'ID à -1.
+		initialisation_faite=1;
+		processus_fils=malloc(sizeof(pid_t));
+	}
+	
+	switch(reponse){
+		case 1:
+
+			printf("Veuillez entrer le nouveau pseudo de ce client\n");
+
+			customer.pseudo=malloc(sizeof(char));
+			scanf("%s",customer.pseudo); //customer.pseudo est un pointeur
+			customer.id_customer=identifiant_client;
+			identifiant_client++;
+			printf("%s est enregistré en tant que nouveau client et à le numéro d'identifiant unique %d !\n",customer.pseudo, customer.id_customer);
+			//On ajoute le nouveau client.
+			
+			//thrd_create( thrd_t *thread, thrd_start_t startFunction, void * data );//création d'un threads
+			
+			printf("%d est la taille de sizeof(list_customer_official) et %d est la taille de sizeof(client) \n",sizeof(list_customer_official), sizeof(client));
+			//add_customer(customer,list_customer_official);
+			
+			free(customer.pseudo);
+			indice_thread++;//Incrémentation de l'indicce du tableau de thread
+			break;
+
+		case 2:
+			
+			nom_client=malloc(sizeof(char));
+			int identifiant_client=0;
+			printf("Entrez votre identifiant :\n");
+			scanf("%d", &identifiant_client);
+			for(int i=0; i<sizeof(list_customer_official);i++){
+				if(identifiant_client==i){//C'est bon'
+					//char * nom_client=malloc(sizeof(char));
+					
+					strcat(nom_client,list_customer_official[identifiant_client].pseudo);
+					
+					i=sizeof(list_customer_official)-1;//On sort de la boucle for
+				}else if(identifiant_client!=i && i==sizeof(list_customer_official)-1){
+					printf("Identifiant non trouvé !\n");
+					free(list_customer_official);	
+					free(processus_fils);
+					free(liste_threads);
+					exit(EXIT_FAILURE);//On quitte le programme avec une exception levée.
+				}
+			}
+			serveur server;
+			server.name="local_server";
+			//server.addr_server
+			
+			printf("Bienvenue %s !\n",nom_client);
+			server_connection(server);
+			//Tester la connexion serveur
+			if(server_connection(server)==-1){
+				printf("La connexion au serveur a échoué, voulez vous vous reconnectez ? [o/n]\n");
+				char decision;
+				scanf("%c", &decision);
+				if(strcmp(&decision,"o")==0){
+					do{
+						server_connection(server);
+					}while(server_connection(server)!=0);
+				}else if(strcmp(&decision,"o")!=0){
+					exit(0);	
+				}		
+			}
+			
+			
+			//thrd_start_t commencement_thread;//Ceci désigne ceux par quoi le thread nouvellement créer va se charger de faire. Cette variable est généralement affectée à une fonctionne
+			//thrd_create( &liste_threads[indice_thread] , commencement_thread  ,(client *) &customer); //Passge d'un pointeur à une structure. Association du thread pour notre client
+			
+			break;
+		case 3: 
+			//Voir les autre clients.
+			//printf("%s\n",);
+			customers_list(list_customer_official);
+			break;
+		case 4: //Quitter l'application
+			//system("kill -l %ld",getpid()); //Tuer le processus en cours d'éxécution (Ne fonctionne pas sur tous les systemes d'exploitation). Fonctionne uniquement sur Linux.
+			free(list_customer_official);	
+			free(processus_fils);
+			free(liste_threads);
+			exit(0);//On quitte programme en laissant un succès	
+			break;	
+		default: //Quitter l'application
+			free(list_customer_official);
+			free(processus_fils);
+			free(liste_threads);
+			exit(0);//On quitte programme en laissant un succès
+			break;
+	}
+
+	char * recommencer=malloc(sizeof(char));
+	printf("Voulez-vous recommencez ? [Oui/O/o/Yes/Y/y/oui/yes] - [Non/N/No/n/non/no/n]\n");
+	scanf("%s",recommencer);
+	if(strcmp(recommencer,"Oui")==0 || strcmp(recommencer,"O")==0 || strcmp(recommencer,"o")==0 || strcmp(recommencer,"oui")==0 || strcmp(recommencer,"Yes")==0 || strcmp(recommencer,"Y")==0 || strcmp(recommencer,"y")==0 || strcmp(recommencer,"yes")==0){
+		run_application();
+	}else if(strcmp(recommencer,"Non")==0  || strcmp(recommencer,"N")==0  || strcmp(recommencer,"No")==0 || strcmp(recommencer,"n")==0 || strcmp(recommencer,"non")==0 || strcmp(recommencer,"no")==0 || strcmp(recommencer,"n")==0){
+		free(list_customer_official);
+		free(processus_fils);
+		free(liste_threads);
+		exit(0);
+	}
+	free(recommencer);
+}
+
+
+int main(void){
+	run_application();
+	return 0;
+}
+
 	//Création d'une fenêtre graphique en SDL, la bibliothèque officielle de GUI en C/C++
 /*	SDL_Window * window=NULL;*/
 /*	SDL_Renderer * renderer=NULL;*/
@@ -97,96 +217,3 @@ void run_application(){
 /*	SDL_DestroyWindow(window);*/
 /*	SDL_Quit();*/
 
-	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Envoyer un message\n3 - Voir les autres clients\n4 - Quittez l'application !\n");
-	client customer;
-	int reponse=0;
-	scanf("%d",&reponse);
-	//list_customer_official=malloc(sizeof(client));
-	unsigned int indice_thread=0;
-	if(initialisation_faite==0){
-		initialisation_id_customers(list_customer_official);//initialisation des champs d'ID à -1.
-		initialisation_faite=1;
-		processus_fils=malloc(sizeof(pid_t));
-	}
-	
-	switch(reponse){
-		case 1:
-
-			printf("Veuillez entrer le nouveau pseudo de ce client\n");
-
-			customer.pseudo=malloc(sizeof(char));
-			scanf("%s",customer.pseudo); //customer.pseudo est un pointeur
-			customer.id_customer=identifiant_client;
-			identifiant_client++;
-			printf("%s est enregistré en tant que nouveau client et à le numéro d'identifiant unique %d !\n",customer.pseudo, customer.id_customer);
-			//On ajoute le nouveau client.
-			
-			//thrd_create( thrd_t *thread, thrd_start_t startFunction, void * data );//création d'un threads
-			thrd_create( &liste_threads[indice_thread] ,   ,(client *) &customer); //Passge d'un pointeur à une structure. Association du thread pour notre client
-			printf("%d est la taille de list_customer_official\n",sizeof(list_customer_official));
-			add_customer(customer,list_customer_official);
-			free(customer.pseudo);
-			indice_thread++;//Incrémentation de l'indicce du tableau de thread
-			break;
-
-		case 2:
-			char * nom_client=NULL;//
-			nom_client=malloc(sizeof(char));
-			int identifiant_client=0;
-			printf("Entrez votre identifiant :\n");
-			scanf("%d", &identifiant_client);
-			for(int i=0; i<sizeof(list_customer_official);i++){
-				if(identifiant_client==i){
-					//char * nom_client=malloc(sizeof(char));
-					
-					strcat(nom_client,list_customer_official[identifiant_client].pseudo);
-					i=sizeof(list_customer_official)-1;//On sort de la boucle for
-				}else if(identifiant_client!=i && i==sizeof(list_customer_official)-1){
-					printf("Identifiant non trouvé !\n");
-					free(list_customer_official);	
-					free(processus_fils);
-					free(liste_threads);
-					exit(EXIT_FAILURE);//On quitte le programme avec une exception levée.
-				}
-			}
-			printf("Bienvenue %s \n",nom_client);
-			break;
-		case 3: 
-			//Voir les autre clients.
-			//printf("%s\n",);
-			customers_list(list_customer_official);
-			break;
-		case 4: //Quitter l'application
-			//system("kill -l %ld",getpid()); //Tuer le processus en cours d'éxécution (Ne fonctionne pas sur tous les systemes d'exploitation). Fonctionne uniquement sur Linux.
-			free(list_customer_official);	
-			free(processus_fils);
-			free(liste_threads);
-			exit(0);//On quitte programme en laissant un succès	
-			break;	
-		default: //Quitter l'application
-			free(list_customer_official);
-			free(processus_fils);
-			free(liste_threads);
-			exit(0);//On quitte programme en laissant un succès
-			break;
-	}
-
-	char * recommencer=malloc(sizeof(char));
-	printf("Voulez-vous recommencez ? [Oui/O/o/Yes/Y/y/oui/yes] - [Non/N/No/n/non/no/n]\n");
-	scanf("%s",recommencer);
-	if(strcmp(recommencer,"Oui")==0 || strcmp(recommencer,"O")==0 || strcmp(recommencer,"o")==0 || strcmp(recommencer,"oui")==0 || strcmp(recommencer,"Yes")==0 || strcmp(recommencer,"Y")==0 || strcmp(recommencer,"y")==0 || strcmp(recommencer,"yes")==0){
-		run_application();
-	}else if(strcmp(recommencer,"Non")==0  || strcmp(recommencer,"N")==0  || strcmp(recommencer,"No")==0 || strcmp(recommencer,"n")==0 || strcmp(recommencer,"non")==0 || strcmp(recommencer,"no")==0 || strcmp(recommencer,"n")==0){
-		free(list_customer_official);
-		free(processus_fils);
-		free(liste_threads);
-		exit(0);
-	}
-	free(recommencer);
-}
-
-
-int main(void){
-	run_application();
-	return 0;
-}
