@@ -1,5 +1,6 @@
 //Pour copier sur nano : Il faut selectionner (souris et ou clavier ou Crtl + 6) et pour copier la sélection :  Alt +Shift + 6
 /*https://koor.fr/C/cthreads/thrd_create.wp*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>
@@ -30,6 +31,8 @@ int initialisation_faite=0; //variable servant de décision au remplissage d'une
 
 //Processus
 pid_t * processus_fils;//On va créer une liste de processus fils. Un processus fils par clients crées
+//Tableau de threads.
+thrd_t * liste_threads=malloc(sizeof(thrd_t));//Initialisation d'un thread avec la taille  pour la taille d'un seul.
 
 void run_application(){
 	//création des threads
@@ -69,7 +72,7 @@ void run_application(){
 /*	SDL_Window *window = SDL_CreateWindow("EFREI - Application client serveur", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN); //Fenêtre en général*/
 
 /*	TTF_Font * font1=TTF_OpenFont("DejaVuSans.ttf",20); //Ici 20 est la taille de ma police*/
-/*/*	TTF_Font * font1=TTF_OpenFont(NULL,20); //Ici 20 est la taille de ma police*/*/
+/*	TTF_Font * font1=TTF_OpenFont(NULL,20); //Ici 20 est la taille de ma police*/
 /*	SDL_Color couleur_text={0,0,0,0};//noir*/
 /*	SDL_Color couleur_fond={255,255,255,255}; //Couleur de fond blanc*/
 /*	*/
@@ -94,13 +97,12 @@ void run_application(){
 /*	SDL_DestroyWindow(window);*/
 /*	SDL_Quit();*/
 
-	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Se connecter au serveur\n3 - Voir les autres clients\n4 - Quittez l'application !\n");
+	printf("Bienvenue sur l'application client-serveur officiel !\n\nQue voulez vous faire ?\n\n1 - Inscrire un nouveau client\n2 - Envoyer un message\n3 - Voir les autres clients\n4 - Quittez l'application !\n");
 	client customer;
 	int reponse=0;
-	reponse=0;
 	scanf("%d",&reponse);
 	//list_customer_official=malloc(sizeof(client));
-
+	unsigned int indice_thread=0;
 	if(initialisation_faite==0){
 		initialisation_id_customers(list_customer_official);//initialisation des champs d'ID à -1.
 		initialisation_faite=1;
@@ -118,17 +120,39 @@ void run_application(){
 			identifiant_client++;
 			printf("%s est enregistré en tant que nouveau client et à le numéro d'identifiant unique %d !\n",customer.pseudo, customer.id_customer);
 			//On ajoute le nouveau client.
-			thrd_create( thrd_t *thread, thrd_start_t startFunction, void * data );//création d'un threads
 			
+			//thrd_create( thrd_t *thread, thrd_start_t startFunction, void * data );//création d'un threads
+			thrd_create( &liste_threads[indice_thread] ,   ,(client *) &customer); //Passge d'un pointeur à une structure. Association du thread pour notre client
 			printf("%d est la taille de list_customer_official\n",sizeof(list_customer_official));
 			add_customer(customer,list_customer_official);
 			free(customer.pseudo);
+			indice_thread++;//Incrémentation de l'indicce du tableau de thread
 			break;
 
 		case 2:
-			printf("Bonjour !\n");
+			char * nom_client=NULL;//
+			nom_client=malloc(sizeof(char));
+			int identifiant_client=0;
+			printf("Entrez votre identifiant :\n");
+			scanf("%d", &identifiant_client);
+			for(int i=0; i<sizeof(list_customer_official);i++){
+				if(identifiant_client==i){
+					//char * nom_client=malloc(sizeof(char));
+					
+					strcat(nom_client,list_customer_official[identifiant_client].pseudo);
+					i=sizeof(list_customer_official)-1;//On sort de la boucle for
+				}else if(identifiant_client!=i && i==sizeof(list_customer_official)-1){
+					printf("Identifiant non trouvé !\n");
+					free(list_customer_official);	
+					free(processus_fils);
+					free(liste_threads);
+					exit(EXIT_FAILURE);//On quitte le programme avec une exception levée.
+				}
+			}
+			printf("Bienvenue %s \n",nom_client);
 			break;
-		case 3: //Voir les autre clients.
+		case 3: 
+			//Voir les autre clients.
 			//printf("%s\n",);
 			customers_list(list_customer_official);
 			break;
@@ -136,11 +160,13 @@ void run_application(){
 			//system("kill -l %ld",getpid()); //Tuer le processus en cours d'éxécution (Ne fonctionne pas sur tous les systemes d'exploitation). Fonctionne uniquement sur Linux.
 			free(list_customer_official);	
 			free(processus_fils);
+			free(liste_threads);
 			exit(0);//On quitte programme en laissant un succès	
 			break;	
 		default: //Quitter l'application
 			free(list_customer_official);
 			free(processus_fils);
+			free(liste_threads);
 			exit(0);//On quitte programme en laissant un succès
 			break;
 	}
@@ -153,6 +179,7 @@ void run_application(){
 	}else if(strcmp(recommencer,"Non")==0  || strcmp(recommencer,"N")==0  || strcmp(recommencer,"No")==0 || strcmp(recommencer,"n")==0 || strcmp(recommencer,"non")==0 || strcmp(recommencer,"no")==0 || strcmp(recommencer,"n")==0){
 		free(list_customer_official);
 		free(processus_fils);
+		free(liste_threads);
 		exit(0);
 	}
 	free(recommencer);
