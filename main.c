@@ -44,8 +44,8 @@ void run_application(){
 	unsigned int indice_thread=0;
 	if(initialisation_faite==0){
 	
-		list_customer_official=(client *) malloc(sizeof(client));//Allocation de x éléments pour la taille d'un type de ce même élément (Structure ou variable)
-		//initialisation_id_customers(list_customer_official);//initialisation des champs d'ID à -1.
+		list_customer_official=(client *) malloc(sizeof(client)*10);//Allocation de x éléments pour la taille d'un type de ce même élément (Structure ou variable)
+		initialisation_id_customers(list_customer_official);//initialisation des champs d'ID à -1.
 		initialisation_faite=1;
 		processus_fils=malloc(sizeof(pid_t));
 	}
@@ -63,9 +63,9 @@ void run_application(){
 			//On ajoute le nouveau client.
 			
 			//thrd_create( thrd_t *thread, thrd_start_t startFunction, void * data );//création d'un threads
-			
+			add_customer(customer,list_customer_official);
 			printf("%d est la taille de sizeof(list_customer_official) et %d est la taille de sizeof(client) \n",sizeof(list_customer_official), sizeof(client));
-			//add_customer(customer,list_customer_official);
+			
 			
 			free(customer.pseudo);
 			indice_thread++;//Incrémentation de l'indicce du tableau de thread

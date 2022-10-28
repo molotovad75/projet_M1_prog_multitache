@@ -183,13 +183,18 @@ void initialisation_id_customers(client * list_customer_official){//On initialis
 
 
 void add_customer(client customer,client * list_customer_official){ //Ajouter un nouveau client dans notre espace de stockage. Il faut l'utiliser après si et seulement si la fonction initialisation_id_customers() est lancée.
+	int array=1;
 	for(int i=0;i<sizeof(list_customer_official);i++){
 		if(list_customer_official[i].id_customer==-1){
 			list_customer_official[i].id_customer=customer.id_customer;
 			list_customer_official[i].pseudo=customer.pseudo;
+			array=0;
+		}
+		printf("Addcustomer: %d %s\n",list_customer_official[i].id_customer, list_customer_official[i].pseudo);
+		if(array==0){
+			break;
 		}
 	}
-	//return list_customer_official;
 }
 
 char * customers_list(client * list_customer_official){ //Consulter la liste de tous les clients de notre application. Il faut l'utiliser après si et seulement si la fonction initialisation_id_customers() est lancée.
